@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <title>צ'אט GPT מאובטח</title>
+  <style>
+    body { font-family: sans-serif; direction: rtl; background: #f9f9f9; padding: 20px; }
+    #chatbox { background: white; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
+    input { width: 70%; padding: 10px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>צ'אט GPT</h2>
+<div id="chatbox"></div>
+<input type="text" id="userInput" placeholder="שאל שאלה..." />
+<button onclick="sendMessage()">שלח</button>
+
+<script>
+  async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const message = input.value;
+    if (!message) return;
+
+    addMessage("👤 אתה: " + message);
+    input.value = "";
+
+    try {
+      // קריאה לשרת צד-שרת
+      const response = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      addMessage("🤖 GPT: " + data.reply);
+    } catch (error) {
+      addMessage("❌ שגיאה: " + error.message);
+    }
+  }
+
+  function addMessage(text) {
+    const box = document.getElementById("chatbox");
+    box.innerHTML += `<div>${text}</div>`;
+    box.scrollTop = box.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
