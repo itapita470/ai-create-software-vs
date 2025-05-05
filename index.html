@@ -70,6 +70,89 @@
   <h1>🤖 צ'אט עם AI</h1>
   <div id="chatbox"></div>
 
+<!-- כפתור עזרה -->
+<button id="helpButton">?</button>
+
+<!-- פופ-אפ -->
+<div id="helpPopup">
+  <h2>הסבר על הבוט</h2>
+  <p>זהו כלי בינה מלאכותית שנועד לעזור לך עם שאלות שונות ולספק מידע. תוכל לשאול אותי כל דבר!</p>
+  <button class="close-btn" onclick="closePopup()">סגור</button>
+</div>
+
+<style>
+  /* כפתור עזרה */
+  #helpButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+  }
+
+  #helpButton:hover {
+    background-color: #0056b3;
+  }
+
+  /* הפופ-אפ */
+  #helpPopup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    text-align: center;
+  }
+
+  #helpPopup h2 {
+    margin: 0;
+  }
+
+  #helpPopup p {
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  /* כפתור סגירה */
+  .close-btn {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .close-btn:hover {
+    background-color: #cc0000;
+  }
+</style>
+
+<script>
+  // הצגת הפופ-אפ
+  document.getElementById("helpButton").onclick = function() {
+    document.getElementById("helpPopup").style.display = "block";
+  };
+
+  // סגירת הפופ-אפ
+  function closePopup() {
+    document.getElementById("helpPopup").style.display = "none";
+  }
+</script>
+
+
   <div id="controls">
     <input type="text" id="userInput" placeholder="כתוב משהו..." onkeydown="handleEnter(event)" />
     <button onclick="sendMessage()">שלח</button>
