@@ -2,53 +2,150 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>צ'אט GPT מאובטח</title>
+  <title>צ'אט עם AI</title>
   <style>
-    body { font-family: sans-serif; direction: rtl; background: #f9f9f9; padding: 20px; }
-    #chatbox { background: white; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
-    input { width: 70%; padding: 10px; }
-    button { padding: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #e9e9e9;
+      padding: 20px;
+      direction: rtl;
+    }
+    #chatbox {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .message {
+      padding: 8px 12px;
+      margin: 5px 0;
+      border-radius: 16px;
+      max-width: 70%;
+      display: inline-block;
+    }
+    .user {
+      background-color: #d0f0ff;
+      text-align: right;
+      float: right;
+      clear: both;
+    }
+    .bot {
+      background-color: #f0f0f0;
+      text-align: left;
+      float: left;
+      clear: both;
+    }
+    .timestamp {
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+    #controls {
+      margin-top: 10px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
   </style>
 </head>
 <body>
 
-<h2>צ'אט GPT</h2>
-<div id="chatbox"></div>
-<input type="text" id="userInput" placeholder="שאל שאלה..." />
-<button onclick="sendMessage()">שלח</button>
+  <h1>🤖 צ'אט עם AI</h1>
+  <div id="chatbox"></div>
 
-<script>
-  async function sendMessage() {
-    const input = document.getElementById("userInput");
-    const message = input.value;
-    if (!message) return;
+  <div id="controls">
+    <input type="text" id="userInput" placeholder="כתוב משהו..." onkeydown="handleEnter(event)" />
+    <button onclick="sendMessage()">שלח</button>
+  </div>
 
-    addMessage("👤 אתה: " + message);
-    input.value = "";
+  <script>
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
 
-    try {
-      // קריאה לשרת צד-שרת
-      const response = await fetch("http://localhost:3000/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message })
-      });
+      addMessage("👤 אתה: " + message, "user");
+      input.value = "";
 
-      const data = await response.json();
-      addMessage("🤖 GPT: " + data.reply);
-    } catch (error) {
-      addMessage("❌ שגיאה: " + error.message);
+      const loading = addMessage("🤖 AI: כותב תגובה...", "bot");
+
+      setTimeout(() => {
+        const reply = generateReply(message);
+        updateMessage(loading, "🤖 AI: " + reply);
+      }, 800);
     }
-  }
 
-  function addMessage(text) {
-    const box = document.getElementById("chatbox");
-    box.innerHTML += `<div>${text}</div>`;
-    box.scrollTop = box.scrollHeight;
-  }
-</script>
+    function generateReply(message) {
+      const msg = message.toLowerCase();
+
+      // שאלות נפוצות
+      if (msg.includes("שלום") || msg.includes("היי")) return "שלום! איך אפשר לעזור?";
+      if (msg.includes("מה השעה")) return "השעה עכשיו היא " + new Date().toLocaleTimeString();
+      if (msg.includes("מה התאריך")) return "היום " + new Date().toLocaleDateString();
+      if (msg.includes("איזה יום")) {
+        const day = new Date().toLocaleDateString("he-IL", { weekday: 'long' });
+        return "היום יום " + day;
+      }
+      if (msg.includes("מי אתה")) return "אני בינה מלאכותית קטנה שנכתבה ב-HTML ו-JavaScript.";
+      if (msg.includes("בדיחה")) return "שני מתכנתים נכנסים לבר... האחד באג, השני יוצא החוצה לבדוק למה!";
+      if (msg.includes("מזג אוויר")) return "אין לי חיבור לאינטרנט, אבל מקווה ששטוף שמש אצלך 😊";
+      if (msg.includes("איך אתה עובד")) return "אני לא באמת חושב – אני רק מגיב לפי מילות מפתח בתגובה פשוטה.";
+      if (msg.includes("מה זה ai") || msg.includes("בינה מלאכותית"))
+        return "AI זו בינה מלאכותית – טכנולוגיה שמדמה חשיבה אנושית במחשב.";
+      if (msg.includes("ביי") || msg.includes("להתראות")) return "להתראות! תמיד כיף לדבר איתך 😊";
+
+      return "לא הבנתי את זה. תוכל לנסח אחרת?";
+    }
+
+    function addMessage(text, type) {
+      const box = document.getElementById("chatbox");
+      const msgDiv = document.createElement("div");
+      const time = new Date().toLocaleTimeString();
+
+      msgDiv.className = `message ${type}`;
+      msgDiv.innerHTML = `
+        ${text}
+        <div class="timestamp">${time}</div>
+      `;
+      box.appendChild(msgDiv);
+      box.scrollTop = box.scrollHeight;
+
+      return msgDiv;
+    }
+
+    function updateMessage(element, newText) {
+      if (element) {
+        const time = new Date().toLocaleTimeString();
+        element.innerHTML = `
+          ${newText}
+          <div class="timestamp">${time}</div>
+        `;
+      }
+    }
+
+    function handleEnter(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    }
+  </script>
 
 </body>
 </html>
