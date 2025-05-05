@@ -38,4 +38,5 @@ app.post("/chat", async (req, res) => {
 // שרת שמאזין על פורט 3000
 app.listen(port, () => {
   console.log(`השרת רץ על http://localhost:${port}`);
+node server.js
 });
